@@ -20,7 +20,7 @@ namespace Scenes{
 
     void BlackJack::onLoad(){
 
-        this->isGameFinished = true;
+        this->isGameFinished = false;
 
         this->dealerTotal = 0;
         this->playerTotal = 0;

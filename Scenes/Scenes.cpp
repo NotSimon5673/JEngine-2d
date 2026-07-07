@@ -19,8 +19,7 @@ namespace Scenes{
         //also does nothing...
     }
     
-    void Scene::onUpdate(){
-        
+    void Scene::onUpdate(sf::Time deltaTime){
     }
 
     void Scene::SuggestForQueue(std::unique_ptr<Scene> suggestedForQueue)

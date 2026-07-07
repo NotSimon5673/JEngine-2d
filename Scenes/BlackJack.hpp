@@ -39,8 +39,16 @@ namespace Scenes{
     class BlackJack : public Scene
     {
         private:
+
+            JUI::TextElement FPSCounter = JUI::TextElement({900, 50}, assets->getFont("comic"), "FPS: 0", sf::Color::Black, 30);  
+
+            JUI::TextElement moneyCounter = JUI::TextElement({window.getSize().x - 200, 50}, assets->getFont("comic"), "Money: 500", sf::Color::Black, 30);
+
+            JUI::TextElement betCounter = JUI::TextElement({window.getSize().x - 200, 100}, assets->getFont("comic"), "Bet: 100", sf::Color::Black, 30);
+
             std::uint_least64_t money = 500;
-            int bet = 100;
+            std::uint_least64_t bet = 100;
+            
             std::uint_fast8_t dealerTotal;
             std::vector<Card> dealerCards;
 
@@ -64,6 +72,6 @@ namespace Scenes{
 
         virtual void onLoad() override;         
         virtual void onExpire() override;       
-        virtual void onUpdate() override;    
+        virtual void onUpdate(sf::Time deltaTime) override;    
     };
 }

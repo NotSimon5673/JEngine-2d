@@ -13,7 +13,8 @@ namespace JUI{
         rect.setSize(size);
         rect.setFillColor(fillColor);
 
-        object = std::make_unique<sf::RectangleShape>(rect);
+        objectDrawable = std::make_shared<sf::RectangleShape>(rect);
+        objectTransformable = std::make_shared<sf::RectangleShape>(rect);
     }
 
 }

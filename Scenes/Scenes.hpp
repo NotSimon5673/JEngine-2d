@@ -37,14 +37,11 @@ namespace Scenes{
             std::list<std::unique_ptr<JUI::UIElement>> sceneUI;
             std::list<std::unique_ptr<JUI::Interactable>> sceneInteractables;
             
-            
-            
-            
             Scene(sf::RenderWindow&, std::unique_ptr<Game::AssetManager>&);
             sf::Color backGroundColor; //probably delete maybe or like turn to UI element
 
             virtual void onLoad();         
             virtual void onExpire();       
-            virtual void onUpdate();    
+            virtual void onUpdate(sf::Time deltaTime);    
     };
 }

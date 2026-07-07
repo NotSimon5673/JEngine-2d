@@ -7,9 +7,7 @@
 namespace JUI{
 
     class Rectangle: public UIElement
-    {
-        private:
-            
+    {            
         public:
 
             Rectangle(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor);

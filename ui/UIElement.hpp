@@ -18,34 +18,34 @@ namespace JUI{
         private: 
             Transform reference;    //set at runtime
         protected:
-            std::shared_ptr<sf::Drawable> object;
+            //do this until SFML releases a generic parent class for drawable and transformable objects. object and transformable point to the same object but are different types.
+            std::shared_ptr<sf::Drawable> objectDrawable;
+            std::shared_ptr<sf::Transformable> objectTransformable;
         public:
             Transform transform;
             virtual void draw(sf::RenderWindow& window) {
-                //can't implement until SFML has a generic parent class for drawable and transformable
-                /*
+                
                 if(transform.position != reference.position){
-                    object->setPosition(transform.position);
+                    objectTransformable->setPosition(transform.position);
                     reference.position = transform.position;
                 }
                 
                 if(transform.rotation != reference.rotation){
-                    object->setRotation(transform.rotation);
+                    objectTransformable->setRotation(transform.rotation);
                     reference.rotation = transform.rotation;
                 }
 
                 if(transform.scale != reference.scale){
-                    object->setScale(transform.scale);
+                    objectTransformable->setScale(transform.scale);
                     reference.scale = transform.scale;
                 }
 
                 if(transform.origin != reference.origin){
-                    object->setOrigin(transform.origin);
+                    objectTransformable->setOrigin(transform.origin);
                     reference.origin = transform.origin;
                 }
-                */
 
-                window.draw(*object);
+                window.draw(*objectDrawable);
             };
 
             virtual void add(std::list<std::unique_ptr<UIElement>>& UIList){

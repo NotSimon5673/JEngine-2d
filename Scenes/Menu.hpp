@@ -14,6 +14,6 @@ namespace Scenes{
 
         virtual void onLoad() override;         
         virtual void onExpire() override;       
-        virtual void onUpdate() override;    
+        virtual void onUpdate(sf::Time deltaTime) override;    
     };
 }

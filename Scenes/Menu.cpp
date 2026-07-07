@@ -36,7 +36,7 @@ namespace Scenes{
 
     }
 
-    void Menu::onUpdate(){
+    void Menu::onUpdate(sf::Time deltaTime){
         
     }
 }

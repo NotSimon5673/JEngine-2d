@@ -11,7 +11,7 @@ namespace JUI{
     void Button::onRelease(sf::Vector2i ClickPosition){
 
         //Until I can get SFML to have a generic parent class for drawable and transformable, this will have to do.
-        sf::RectangleShape* rect = dynamic_cast<sf::RectangleShape*>(Rectangle::object.get());
+        sf::RectangleShape* rect = dynamic_cast<sf::RectangleShape*>(Rectangle::objectDrawable.get());
 
         sf::Vector2f Position = rect->getPosition();
         sf::Vector2f Size =rect->getSize();

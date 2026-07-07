@@ -17,9 +17,12 @@ namespace Game{
     Application::~Application() = default;
 
     void Application::run(){
-        std::cout << window.isOpen() << "\n";
+
+        sf::Clock clock;
+        clock.start();
         while(window.isOpen()){
-            sceneManager->update();
+            sf::Time deltaTime = clock.restart();
+            sceneManager->update(deltaTime);
         }
     }
 

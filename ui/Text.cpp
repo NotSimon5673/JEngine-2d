@@ -15,6 +15,15 @@ namespace JUI{
         txt.setPosition(position);
         txt.setFillColor(textColor);
 
-        object = std::make_unique<sf::Text>(txt);
+        objectDrawable = std::make_shared<sf::Text>(txt);
+        objectTransformable = std::make_shared<sf::Text>(txt);
+    }
+
+    void TextElement::setText(std::string message){
+
+        sf::Text& txt = dynamic_cast<sf::Text&>(*objectDrawable);
+        sf::FloatRect bounds = txt.getLocalBounds();
+
+        txt.setString(message);
     }
 }

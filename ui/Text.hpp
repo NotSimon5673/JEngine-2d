@@ -12,5 +12,7 @@ namespace JUI{
         sf::Font loadedFont;
         public:
             TextElement(sf::Vector2f, sf::Font&, std::string, sf::Color, uint size = 30);
+
+            void setText(std::string);
     };
 }

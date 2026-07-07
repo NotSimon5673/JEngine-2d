@@ -4,35 +4,28 @@
 
 namespace JUI{
 
-    Button::Button(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor, sf::Font& font, std::string message, std::function<void()> func, sf::Color textColor, uint textSize) : text(font, message, textSize), buttonFunction(func){
+    Button::Button(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor, sf::Font& font, std::string message, std::function<void()> func, sf::Color textColor, uint textSize) : TextElement(position, font, message, textColor, textSize), Rectangle(position, size, fillColor), buttonFunction(func){
 
-        rectObject.setOrigin({size.x/2,size.y/2});
-        rectObject.setPosition(position);
-        rectObject.setSize(size);
-        rectObject.setFillColor(fillColor);
-
-        sf::FloatRect bounds = text.getLocalBounds();
-
-        text.setOrigin({bounds.size.x/2, bounds.size.y/2});
-        text.setPosition(position);
-        text.setFillColor(textColor);
-    }
-
-    void Button::draw(sf::RenderWindow& window){ 
-        window.draw(this->rectObject);
-        window.draw(this->text);
     }
 
     void Button::onRelease(sf::Vector2i ClickPosition){
-        sf::Vector2f Position = rectObject.getPosition();
-        sf::Vector2f Size = rectObject.getSize();
+
+        //Until I can get SFML to have a generic parent class for drawable and transformable, this will have to do.
+        sf::RectangleShape* rect = dynamic_cast<sf::RectangleShape*>(Rectangle::object.get());
+
+        sf::Vector2f Position = rect->getPosition();
+        sf::Vector2f Size =rect->getSize();
 
 
         if(ClickPosition.x > Position.x - Size.x/2 && ClickPosition.y > Position.y - Size.y/2 && ClickPosition.x < Position.x + Size.x/2 && ClickPosition.y < Position.y + Size.y/2){
             buttonFunction();
         }
             
-            
+    }
+
+    void Button::draw(sf::RenderWindow& window){
+        Rectangle::draw(window);
+        TextElement::draw(window);
     }
 
 }

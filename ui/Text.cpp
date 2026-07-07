@@ -4,17 +4,17 @@
 
 namespace JUI{
 
-    TextElement::TextElement(sf::Vector2f position,sf::Font& font, std::string message, sf::Color textColor, uint characterSize) : text(font, message, characterSize){
+    TextElement::TextElement(sf::Vector2f position,sf::Font& font, std::string message, sf::Color textColor, uint characterSize){
 
-        sf::FloatRect bounds = text.getLocalBounds();
+        loadedFont = font;
+        
+        sf::Text txt = sf::Text(font, message, characterSize);
+        sf::FloatRect bounds = txt.getLocalBounds();
 
-        text.setOrigin({bounds.size.x/2, bounds.size.y/2});
-        text.setPosition(position);
-        text.setFillColor(textColor);
+        txt.setOrigin({bounds.size.x/2, bounds.size.y/2});
+        txt.setPosition(position);
+        txt.setFillColor(textColor);
+
+        object = std::make_unique<sf::Text>(txt);
     }
-
-    void TextElement::draw(sf::RenderWindow& window){
-        window.draw(this->text);
-    }
-
 }

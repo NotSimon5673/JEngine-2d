@@ -15,6 +15,7 @@ namespace Game{
     }
     SceneManager::~SceneManager() = default;
 
+    //I have a list which i need to use to store every one of my derived classes and each has it's own template type t ALL of which derive from sf::drawable and sf::transformable and I don't need ANY other information aout the classes except for informmation from those two base classes. how do I make that list
     void SceneManager::update()
     {
         this->sceneInQueue = std::move(currentScene->suggestedScene);
@@ -41,7 +42,7 @@ namespace Game{
             this->currentScene = std::move(this->sceneInQueue);
         
 
-        this->SceneExpired == false;
+        this->SceneExpired = false;
     }
 
     void SceneManager::drawCurrentScene()

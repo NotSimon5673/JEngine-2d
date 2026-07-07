@@ -7,14 +7,13 @@ namespace JUI{
 
     Rectangle::Rectangle(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor){
 
-        rectObject.setOrigin({size.x/2,size.y/2});
-        rectObject.setPosition(position);
-        rectObject.setSize(size);
-        rectObject.setFillColor(fillColor);
-    }
+        sf::RectangleShape rect = sf::RectangleShape();
+        rect.setOrigin({size.x/2,size.y/2});
+        rect.setPosition(position);
+        rect.setSize(size);
+        rect.setFillColor(fillColor);
 
-    void Rectangle::draw(sf::RenderWindow& window){ 
-        window.draw(this->rectObject);
+        object = std::make_unique<sf::RectangleShape>(rect);
     }
 
 }

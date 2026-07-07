@@ -5,7 +5,7 @@
 #include "UIElement.hpp"
 
 namespace JUI{
-
+    
     class Interactable: public UIElement
     {
         private:

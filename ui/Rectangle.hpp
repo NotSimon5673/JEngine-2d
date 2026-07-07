@@ -12,8 +12,6 @@ namespace JUI{
             
         public:
 
-            sf::RectangleShape rectObject;
-
             Rectangle(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor);
 
             void move(sf::Vector2f position);
@@ -23,7 +21,5 @@ namespace JUI{
             void addBorder(float thickness, sf::Color color);
 
             void setColor(sf::Color);
-
-            void draw(sf::RenderWindow& window) override;
     };
 }

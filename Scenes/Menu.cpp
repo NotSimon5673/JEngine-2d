@@ -17,12 +17,14 @@ namespace Scenes{
 
     void Menu::onLoad(){
 
+        
+        
         JUI::TextElement menuTitle = JUI::TextElement( {window.getSize().x/2,  400},assets->getFont("comic"), "JEngine 2D test",sf::Color::Black, 80);
         this->sceneUI.push_back(std::make_unique<JUI::TextElement>(menuTitle));
 
-        JUI::TextElement menuSubtitle = JUI::TextElement( {window.getSize().x/2, 500},assets->getFont("comic"), "Ver 1.0",sf::Color::Black, 50);
+        JUI::TextElement menuSubtitle = JUI::TextElement( {window.getSize().x/2, 500},assets->getFont("comic"), "Ver 0.1.2",sf::Color::Black, 50);
         this->sceneUI.push_back(std::make_unique<JUI::TextElement>(menuSubtitle));
-
+        
         JUI::Button otherButton = JUI::Button({window.getSize().x/2, 700}, {400, 100}, sf::Color::White, assets->getFont("kill"), "play", [this]() {SuggestForQueue(std::make_unique<Scenes::BlackJack>(window,assets));}, sf::Color::Black, 50);
         this->sceneInteractables.push_back(std::make_unique<JUI::Button>(otherButton));
 

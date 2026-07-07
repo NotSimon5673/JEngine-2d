@@ -101,7 +101,7 @@ namespace Scenes{
             this->dealerTotal += temp;
 
             currentDeck[0].show({window.getSize().x/8 + dealerCards.size()* 200 ,window.getSize().y/10}, assets->getFont("comic"));
-            this->sceneInteractables.push_back(move(currentDeck[0].body));
+            this->sceneInteractables.push_back(std::move(currentDeck[0].body));
 
             this->dealerCards.push_back(std::move(currentDeck[0]));
             if(playerTotal > 21) end();
@@ -125,7 +125,7 @@ namespace Scenes{
 
         
         JUI::Button standButton = JUI::Button({window.getSize().x/2, window.getSize().y/2}, {400, 100}, sf::Color::White, assets->getFont("kill"), "play again", [this]() {this->needsReload = true;}, sf::Color::Black, 50);
-        this->sceneInteractables.push_back(std::make_unique<JUI::Button>(standButton));        
+        this->sceneInteractables.push_back(std::make_unique<JUI::Button>(standButton));   
     }
 
 

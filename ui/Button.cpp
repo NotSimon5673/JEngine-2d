@@ -4,28 +4,30 @@
 
 namespace JUI{
 
-    Button::Button(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor, sf::Font& font, std::string message, std::function<void()> func, sf::Color textColor, uint textSize) : TextElement(position, font, message, textColor, textSize), Rectangle(position, size, fillColor), buttonFunction(func){
-
+    Button::Button(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor, sf::Font& font, std::string message,  sf::Color textColor, uint textSize) : text(position, font, message, textColor, textSize), rect(position, size, fillColor){
+        
+        this->transform.origin = {size.x/2, size.y/2};
+        this->transform.position = position;
+        this->transform.scale = {1, 1};
+        this->transform.rotation = sf::Angle::Zero;
     }
 
-    void Button::onRelease(sf::Vector2i ClickPosition){
+    void Button::updateTransform(){
+        rect.transform.position = this->transform.position;
+        text.transform.position = this->transform.position;
 
-        //Until I can get SFML to have a generic parent class for drawable and transformable, this will have to do.
-        sf::RectangleShape* rect = dynamic_cast<sf::RectangleShape*>(Rectangle::objectDrawable.get());
+        rect.transform.scale = this->transform.scale;
+        text.transform.scale = this->transform.scale;
 
-        sf::Vector2f Position = rect->getPosition();
-        sf::Vector2f Size =rect->getSize();
-
-
-        if(ClickPosition.x > Position.x - Size.x/2 && ClickPosition.y > Position.y - Size.y/2 && ClickPosition.x < Position.x + Size.x/2 && ClickPosition.y < Position.y + Size.y/2){
-            buttonFunction();
-        }
-            
+        rect.transform.rotation = this->transform.rotation;
+        text.transform.rotation = this->transform.rotation;
     }
 
     void Button::draw(sf::RenderWindow& window){
-        Rectangle::draw(window);
-        TextElement::draw(window);
-    }
 
+        this->updateTransform();
+        
+        rect.draw(window);
+        text.draw(window);
+    }
 }

@@ -6,7 +6,7 @@
 
 namespace JUI{
 
-    class Rectangle: public UIElement
+    class Rectangle: virtual public UIElement
     {            
         public:
 
@@ -19,5 +19,7 @@ namespace JUI{
             void addBorder(float thickness, sf::Color color);
 
             void setColor(sf::Color);
+
+            ~Rectangle() = default;
     };
 }

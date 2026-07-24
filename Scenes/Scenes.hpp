@@ -7,7 +7,7 @@
 #include "../Game/AssetManager.hpp"
 #include "../ui/UIElement.hpp"
 #include "../ui/Interactable.hpp"
-
+#include "../ui/EventListener.hpp"
 
 namespace Game {class SceneManager;}
 
@@ -35,7 +35,8 @@ namespace Scenes{
             
         public:
             std::list<std::unique_ptr<JUI::UIElement>> sceneUI;
-            std::list<std::unique_ptr<JUI::Interactable>> sceneInteractables;
+
+            std::list<std::unique_ptr<JUI::EventListener>> events;
             
             Scene(sf::RenderWindow&, std::unique_ptr<Game::AssetManager>&);
             sf::Color backGroundColor; //probably delete maybe or like turn to UI element

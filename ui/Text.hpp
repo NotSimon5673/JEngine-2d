@@ -6,7 +6,7 @@
 
 namespace JUI{
 
-    class TextElement : public UIElement
+    class TextElement : virtual public UIElement
     {
         private:;
         sf::Font loadedFont;
@@ -14,5 +14,7 @@ namespace JUI{
             TextElement(sf::Vector2f, sf::Font&, std::string, sf::Color, uint size = 30);
 
             void setText(std::string);
+
+            ~TextElement() = default;
     };
 }

@@ -13,7 +13,7 @@ namespace Scenes{
 
     enum SuitType :  std::int8_t {Heart,  Diamond, Spade, Club};
 
-    struct Card
+    class Card
     {
     public:
         Card(Rank, SuitType);
@@ -24,9 +24,11 @@ namespace Scenes{
 
         SuitType suit;
 
-        std::unique_ptr<JUI::Button> body;
-
         bool IsHidden = true;
+
+        std::unique_ptr<JUI::Rectangle> body;
+
+        std::unique_ptr<JUI::TextElement> text;
     };
 
     struct deck : public std::vector<Card> {
@@ -48,7 +50,7 @@ namespace Scenes{
 
             std::uint_least64_t money = 500;
             std::uint_least64_t bet = 100;
-            
+
             std::uint_fast8_t dealerTotal;
             std::vector<Card> dealerCards;
 

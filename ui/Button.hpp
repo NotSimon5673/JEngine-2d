@@ -8,13 +8,20 @@
 
 namespace JUI{
 
-    class Button: public Interactable, public Rectangle, public TextElement
-    {
+    class Button: public UIElement{
+
         private:
-            std::function<void()> buttonFunction;
+            
+
         public:
 
-            Button(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor, sf::Font& TextFont, std::string message, std::function<void()>, sf::Color textColor = sf::Color::Black, uint textSize = 30);
+        //put back in private once my awful code is fixed
+            Rectangle rect;
+            TextElement text;
+
+            sf::Vector2f Size; //uhhh change this later probably
+
+            Button(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor, sf::Font& TextFont, std::string message,  sf::Color textColor = sf::Color::Black, uint textSize = 30);
 
             void move(sf::Vector2f position);
 
@@ -26,8 +33,8 @@ namespace JUI{
 
             void draw(sf::RenderWindow& window) override;
 
-            void onPress(sf::Vector2i ClickPosition) override {};
+            void updateTransform() override;
 
-            void onRelease(sf::Vector2i ClickPosition) override;
+            ~Button() override = default;
     };
 }

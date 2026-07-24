@@ -1,6 +1,7 @@
 #include "SceneManager.hpp"
 #include "../Scenes/Scenes.hpp"
 #include "../Scenes/Menu.hpp"
+#include "Events.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <iostream>
@@ -53,9 +54,6 @@ namespace Game{
         for(auto& element : currentScene->sceneUI){
             element->draw(window);
         }
-        for(auto& element : currentScene->sceneInteractables){
-            element->draw(window);
-        }
 
 
 
@@ -66,19 +64,12 @@ namespace Game{
     {
         while (const std::optional event = window.pollEvent())
             {
+                
                 // Request for closing the window
                 if (event->is<sf::Event::Closed>()) window.close();
-
-                if (event->is<sf::Event::MouseButtonPressed>()){
-                    for(auto& element : currentScene->sceneInteractables){
-                        element->onPress(sf::Mouse::getPosition());
-                    }
-                }
-
-                if (event->is<sf::Event::MouseButtonReleased>()){
-                    for(auto& element : currentScene->sceneInteractables){
-                        element->onRelease(sf::Mouse::getPosition());
-                    }
+                
+                else for(auto& listener : currentScene->events) if(getEventType(event.value()) == listener->eventType) { 
+                    listener->activate(sf::Mouse::getPosition(window));
                 }
             }
     }

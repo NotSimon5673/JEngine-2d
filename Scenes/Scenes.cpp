@@ -33,8 +33,8 @@ namespace Scenes{
 
     void Scene::reloadScene(){
         this->needsReload = false;
-        this->sceneInteractables.clear();
         this->sceneUI.clear();
+        this->events.clear();
 
         this->onLoad();
     }

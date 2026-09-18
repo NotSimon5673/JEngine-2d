@@ -57,12 +57,7 @@ namespace JUI{
 
                 window.draw(*objectDrawable);
             };
-
-            virtual void add(std::list<std::unique_ptr<UIElement>>& UIList){
-                //Doesn't work cause of pointer nonsense 
-                UIList.push_back(std::unique_ptr<UIElement>(this));
-            }
-        
+            
             virtual ~UIElement() = default;
         };
 }

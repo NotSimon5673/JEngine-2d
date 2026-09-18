@@ -6,6 +6,7 @@
 
 #include "../Game/AssetManager.hpp"
 #include "../ui/UIElement.hpp"
+#include "../ui/Button.hpp"
 #include "../ui/Interactable.hpp"
 #include "../ui/EventListener.hpp"
 
@@ -41,6 +42,9 @@ namespace Scenes{
             Scene(sf::RenderWindow&, std::unique_ptr<Game::AssetManager>&);
             sf::Color backGroundColor; //probably delete maybe or like turn to UI element
 
+            void addToScene(JUI::UIElement);
+            void addToScene(JUI::Button);    //not sure if I'll need this. I'm not really sure what I'm gonna do with event listeners
+            void addToScene(JUI::EventListener);          //not sure if I'll need this. I'm not really sure what I'm gonna do with event listeners
             virtual void onLoad();         
             virtual void onExpire();       
             virtual void onUpdate(sf::Time deltaTime);    

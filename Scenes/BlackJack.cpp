@@ -37,25 +37,44 @@ namespace Scenes{
         }
         dealerCards.clear();
 
-        this->sceneUI.push_back(std::make_unique<JUI::TextElement>(FPSCounter));
-        this->sceneUI.push_back(std::make_unique<JUI::TextElement>(moneyCounter));
-        this->sceneUI.push_back(std::make_unique<JUI::TextElement>(betCounter));
+        this->addToScene(FPSCounter);
+        this->addToScene(moneyCounter);
+        this->addToScene(betCounter);
        
-        std::unique_ptr<JUI::Button> exitButton = std::make_unique<JUI::Button>(JUI::Button({100, 100}, {100, 100}, sf::Color::White, assets->getFont("comic"), "Menu", sf::Color::Black, 30));
-        JUI::EventListener ev3 = JUI::EventListener(exitButton->rect, sf::Event::MouseButtonReleased(),[this]() {SuggestForQueue(std::make_unique<Scenes::Menu>(window,assets));});
-        
-        this->sceneUI.push_back(std::move(exitButton));
+        JUI::Button exitButton = JUI::Button({100, 100}, {100, 100}, sf::Color::White, assets->getFont("comic"), "Menu", sf::Color::Black, 30);
+        JUI::EventListener ev3 = AddEvent(exitButton, sf::Event::MouseButtonReleased()){
+            sf::Vector2i clickPos = sf::Mouse::getPosition();
+
+            if(exitButton.rect.bounds.contains(window.mapPixelToCoords(clickPos))){
+                SuggestForQueue(std::make_unique<Scenes::Menu>(window,assets));
+            } 
+        });
+                
+        this->addToScene(exitButton);
         this->events.push_back(std::make_unique<JUI::EventListener>(ev3));
 
 
-        std::unique_ptr<JUI::Button> hitButton = std::make_unique<JUI::Button>(JUI::Button({window.getSize().x/4, 900}, {400, 100}, sf::Color::White, assets->getFont("kill"), "hit", sf::Color::Black, 50));
-        JUI::EventListener hitEvent = JUI::EventListener(hitButton->rect, sf::Event::MouseButtonReleased(),[this]() {if(this->isPlayerTurn) draw();});
-        this->sceneUI.push_back(std::move(hitButton));
+        JUI::Button hitButton = JUI::Button({window.getSize().x/4, 900}, {400, 100}, sf::Color::White, assets->getFont("kill"), "hit", sf::Color::Black, 50);
+        JUI::EventListener hitEvent = AddEvent(hitButton, sf::Event::MouseButtonReleased()){
+            sf::Vector2i clickPos = sf::Mouse::getPosition();
+
+            if(hitButton.rect.bounds.contains(window.mapPixelToCoords(clickPos)) && this->isPlayerTurn){
+                draw();
+            }
+        });
+
+        this->addToScene(hitButton);
         this->events.push_back(std::make_unique<JUI::EventListener>(hitEvent));
 
-        std::unique_ptr<JUI::Button> standButton = std::make_unique<JUI::Button>(JUI::Button({window.getSize().x*3/4, 900}, {400, 100}, sf::Color::White, assets->getFont("kill"), "stand", sf::Color::Black, 50));
-        JUI::EventListener standEvent = JUI::EventListener(standButton->rect, sf::Event::MouseButtonReleased(),[this]() {this->isPlayerTurn = false;});
-        this->sceneUI.push_back(std::move(standButton));
+        JUI::Button standButton = JUI::Button({window.getSize().x*3/4, 900}, {400, 100}, sf::Color::White, assets->getFont("kill"), "stand", sf::Color::Black, 50);
+        JUI::EventListener standEvent = AddEvent(standButton, sf::Event::MouseButtonReleased()){
+            sf::Vector2i clickPos = sf::Mouse::getPosition();
+
+            if(standButton.rect.bounds.contains(window.mapPixelToCoords(clickPos))){
+                this->isPlayerTurn = false;
+            }
+        });
+        this->addToScene(standButton);
         this->events.push_back(std::make_unique<JUI::EventListener>(standEvent));
 
         
@@ -83,7 +102,7 @@ namespace Scenes{
             isPlayerTurn = true;
             return;
         }  
-        else while(dealerTotal < 17)
+        else while(dealerTotal < 17 && this->isGameFinished == false)
         {
             draw();
         } 
@@ -91,18 +110,15 @@ namespace Scenes{
         this->end();
     }
 
-
     void BlackJack::draw(){
         if(this -> isGameFinished) return;
-
-        int temp = (int)currentDeck[0].rank;
-
-        if(temp > 10) temp = 10;
 
         currentDeck[0].IsHidden = false;
 
         if(this->isPlayerTurn){
-            this->playerTotal += temp;
+            this->playerTotal += (int)currentDeck[0].rank;
+
+            if((int)currentDeck[0].rank == 1 && playerTotal <= 10) this->playerTotal += 10;
 
             currentDeck[0].show({window.getSize().x/2 + playerCards.size() * 200 ,window.getSize().y*6/10}, assets->getFont("comic"));
             this->sceneUI.push_back(std::move(currentDeck[0].body));
@@ -112,14 +128,16 @@ namespace Scenes{
 
             if(playerTotal > 21) end();
         } else {
-            this->dealerTotal += temp;
+            this->dealerTotal += (int)currentDeck[0].rank;
+
+            if((int)currentDeck[0].rank == 1 && dealerTotal <= 10) this->dealerTotal += 10;
 
             currentDeck[0].show({window.getSize().x/8 + dealerCards.size()* 200 ,window.getSize().y/10}, assets->getFont("comic"));
             this->sceneUI.push_back(std::move(currentDeck[0].body));
             this->sceneUI.push_back(std::move(currentDeck[0].text));
 
             this->dealerCards.push_back(std::move(currentDeck[0]));
-            if(playerTotal > 21) end();
+            if(dealerTotal > 21) end();
             
         }
         currentDeck.erase(currentDeck.begin());
@@ -131,23 +149,26 @@ namespace Scenes{
         this->isGameFinished = true;
 
         JUI::TextElement resultText = JUI::TextElement({window.getSize().x/2, window.getSize().y/4}, assets->getFont("comic"), "", sf::Color::Black, 50);
-
         if(dealerTotal > 21 || (playerTotal > dealerTotal && playerTotal <= 21)){
             
             resultText.setText("You Win!");
-            this->sceneUI.push_back(std::make_unique<JUI::TextElement>(resultText));
             this->money += this->bet;
         }  else {
             resultText.setText("You Lose!");
-            this->sceneUI.push_back(std::make_unique<JUI::TextElement>(resultText));
             this->money -= this->bet;
         }
+        this->addToScene(resultText);
 
         moneyCounter.setText("Money: " + std::to_string(this->money));
 
-        std::unique_ptr<JUI::Button> replayButton = std::make_unique<JUI::Button>(JUI::Button({window.getSize().x/2, window.getSize().y/2 - 20}, {400, 100}, sf::Color::White, assets->getFont("kill"), "play again", sf::Color::Black, 50));
-        JUI::EventListener replayEvent = JUI::EventListener(replayButton->rect, sf::Event::MouseButtonReleased(),[this]() {this->needsReload = true;});
-        this->sceneUI.push_back(std::move(replayButton)); 
+        JUI::Button replayButton = JUI::Button({window.getSize().x/2, window.getSize().y/2 - 20}, {400, 100}, sf::Color::White, assets->getFont("kill"), "play again", sf::Color::Black, 50);
+        JUI::EventListener replayEvent = AddEvent(replayButton, sf::Event::MouseButtonReleased()){
+            if(replayButton.rect.bounds.contains(window.mapPixelToCoords(sf::Mouse::getPosition()))){
+                this->needsReload = true;
+            }
+        });
+
+        this->addToScene(replayButton);
         this->events.push_back(std::make_unique<JUI::EventListener>(replayEvent));
     }   
 

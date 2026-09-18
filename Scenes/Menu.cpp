@@ -19,21 +19,35 @@ namespace Scenes{
     void Menu::onLoad(){
         
         JUI::TextElement menuTitle = JUI::TextElement( {window.getSize().x/2,  400},assets->getFont("comic"), "JEngine 2D test",sf::Color::Black, 80);
-        this->sceneUI.push_back(std::make_unique<JUI::TextElement>(menuTitle));
+        this->addToScene(menuTitle);
 
         JUI::TextElement menuSubtitle = JUI::TextElement( {window.getSize().x/2, 500},assets->getFont("comic"), "Ver 0.1.2",sf::Color::Black, 50);
-        this->sceneUI.push_back(std::make_unique<JUI::TextElement>(menuSubtitle));     
+        this->addToScene(menuSubtitle);
 
-        std::unique_ptr<JUI::Button> otherButton = std::make_unique<JUI::Button>(JUI::Button({window.getSize().x/2, 700}, {400, 100}, sf::Color::White, assets->getFont("kill"), "play", sf::Color::Black, 50));
-        JUI::EventListener ev1 = JUI::EventListener(otherButton->rect, sf::Event::MouseButtonReleased(),[this]() {SuggestForQueue(std::make_unique<Scenes::BlackJack>(window,assets));});
-        //                                                                          ^this will break in the future and is bad
-        this->sceneUI.push_back(std::move(otherButton));
+        JUI::Button otherButton = JUI::Button({window.getSize().x/2, 700}, {400, 100}, sf::Color::White, assets->getFont("kill"), "play", sf::Color::Black, 50);
+
+        JUI::EventListener ev1 = AddEvent(otherButton, sf::Event::MouseButtonReleased()){
+            sf::Vector2i clickPos = sf::Mouse::getPosition();
+
+            if(otherButton.rect.bounds.contains(window.mapPixelToCoords(clickPos))){
+                SuggestForQueue(std::make_unique<Scenes::BlackJack>(window,assets));
+            } 
+        });
+        
+        this->addToScene(otherButton);
         this->events.push_back(std::make_unique<JUI::EventListener>(ev1));
 
-        std::unique_ptr<JUI::Button> exitButton = std::make_unique<JUI::Button>(JUI::Button({window.getSize().x/2, 900}, {400, 100}, sf::Color::White, assets->getFont("comic"), "Quit", sf::Color::Black, 50));
-        JUI::EventListener ev2 = JUI::EventListener(exitButton->rect, sf::Event::MouseButtonReleased(),[this]() {window.close();}); 
+        JUI::Button exitButton = JUI::Button({window.getSize().x/2, 900}, {400, 100}, sf::Color::White, assets->getFont("comic"), "Quit", sf::Color::Black, 50);
+        JUI::EventListener ev2 = AddEvent(exitButton, sf::Event::MouseButtonReleased()){
+            sf::Vector2i clickPos = sf::Mouse::getPosition();
 
-        this->sceneUI.push_back(std::move(exitButton));
+            if(exitButton.rect.bounds.contains(window.mapPixelToCoords(clickPos))){
+                window.close();
+            }
+
+        });
+
+        this->addToScene(exitButton);
         this->events.push_back(std::make_unique<JUI::EventListener>(ev2));
 
     }

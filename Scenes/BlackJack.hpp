@@ -9,7 +9,7 @@
 
 namespace Scenes{
 
-    enum Rank: std::int8_t {Ace = 1, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King};
+    enum Rank: std::int8_t {Ace = 1, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack = 10, Queen = 10, King = 10};
 
     enum SuitType :  std::int8_t {Heart,  Diamond, Spade, Club};
 

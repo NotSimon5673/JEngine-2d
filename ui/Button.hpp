@@ -19,8 +19,6 @@ namespace JUI{
             Rectangle rect;
             TextElement text;
 
-            sf::Vector2f Size; //uhhh change this later probably
-
             Button(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor, sf::Font& TextFont, std::string message,  sf::Color textColor = sf::Color::Black, uint textSize = 30);
 
             void move(sf::Vector2f position);

@@ -69,7 +69,7 @@ namespace Game{
                 if (event->is<sf::Event::Closed>()) window.close();
                 
                 else for(auto& listener : currentScene->events) if(getEventType(event.value()) == listener->eventType) { 
-                    listener->activate(sf::Mouse::getPosition(window));
+                    listener->activate();
                 }
             }
     }

@@ -10,12 +10,12 @@ namespace JUI{
         
         sf::Text txt = sf::Text(font, message, characterSize);
         sf::FloatRect bounds = txt.getLocalBounds();
-
+        std::cout << txt.getLocalBounds().size.x << " " << txt.getLocalBounds().size.y << std::endl;
         this->transform.origin = {bounds.size.x/2, bounds.size.y/2};
         this->transform.position = position;
         txt.setFillColor(textColor);
 
-        std::shared_ptr<sf::Text> temp = std::make_shared<sf::Text>(txt);
+        auto temp = std::make_shared<sf::Text>(txt);
 
         objectDrawable = temp;
         objectTransformable = temp;
@@ -23,8 +23,11 @@ namespace JUI{
 
     void TextElement::setText(std::string message){
         sf::Text& txt = dynamic_cast<sf::Text&>(*objectDrawable);
-        sf::FloatRect bounds = txt.getLocalBounds();
-
         txt.setString(message);
+        
+        sf::FloatRect bounds = txt.getLocalBounds();
+        this->transform.origin = {bounds.size.x/2, bounds.size.y/2};
+
+        
     }
 }

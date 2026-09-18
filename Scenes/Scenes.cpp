@@ -38,4 +38,12 @@ namespace Scenes{
 
         this->onLoad();
     }
+
+    void Scene::addToScene(JUI::UIElement element){
+        this->sceneUI.push_back(std::make_unique<JUI::UIElement>(element));
+    }
+
+    void Scene::addToScene(JUI::Button button){
+        this->sceneUI.push_back(std::make_unique<JUI::Button>(button));
+    }
 }

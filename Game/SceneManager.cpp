@@ -10,6 +10,8 @@
 
 namespace Game{
 
+    
+
     SceneManager::SceneManager(sf::RenderWindow& parentWindow, std::unique_ptr<AssetManager>& Assets) : window(parentWindow), assets(Assets){
         //Note:: NEVER TRY TO MAKE UNIQUE OF GENERIC SCENE TYPE IT WILL CAUSE SEGFAULTS
         this->currentScene = std::make_unique<Scenes::Menu>(parentWindow, assets);
@@ -68,7 +70,7 @@ namespace Game{
                 // Request for closing the window
                 if (event->is<sf::Event::Closed>()) window.close();
                 
-                else for(auto& listener : currentScene->events) if(getEventType(event.value()) == listener->eventType) { 
+                else for(auto& listener : currentScene->eventMap[getEventType(event.value())]){ 
                     listener->activate();
                 }
             }

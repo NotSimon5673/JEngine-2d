@@ -42,7 +42,7 @@ namespace Scenes{
         });
                 
         this->addToScene(exitButton);
-        this->events.push_back(std::make_unique<JUI::EventListener>(ev3));
+        this->addToScene(ev3);
 
 
         JUI::Button hitButton = JUI::Button({window.getSize().x/4, 900}, {400, 100}, sf::Color::White, assets->getFont("kill"), "hit", sf::Color::Black, 50);
@@ -55,7 +55,7 @@ namespace Scenes{
         });
 
         this->addToScene(hitButton);
-        this->events.push_back(std::make_unique<JUI::EventListener>(hitEvent));
+        this->addToScene(hitEvent);
 
         JUI::Button standButton = JUI::Button({window.getSize().x*3/4, 900}, {400, 100}, sf::Color::White, assets->getFont("kill"), "stand", sf::Color::Black, 50);
         JUI::EventListener standEvent = AddEvent(standButton, sf::Event::MouseButtonReleased()){
@@ -66,8 +66,7 @@ namespace Scenes{
             }
         });
         this->addToScene(standButton);
-        this->events.push_back(std::make_unique<JUI::EventListener>(standEvent));
-
+        this->addToScene(standEvent);
         
         player.Draw();
         player.Draw();
@@ -121,7 +120,7 @@ namespace Scenes{
         });
 
         this->addToScene(replayButton);
-        this->events.push_back(std::make_unique<JUI::EventListener>(replayEvent));
+        this->addToScene(replayEvent);
     }   
 
     Player::Player(BlackJack& BJScene, bool isD, bool isP) : game(BJScene), isDealer(isP), isHuman(isP) {

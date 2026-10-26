@@ -34,7 +34,7 @@ namespace Scenes{
     void Scene::reloadScene(){
         this->needsReload = false;
         this->sceneUI.clear();
-        this->events.clear();
+        this->eventMap.clear();
 
         this->onLoad();
     }
@@ -43,7 +43,9 @@ namespace Scenes{
         this->sceneUI.push_back(std::make_unique<JUI::UIElement>(element));
     }
 
-    void Scene::addToScene(JUI::Button button){
-        this->sceneUI.push_back(std::make_unique<JUI::Button>(button));
+    void Scene::addToScene(JUI::EventListener listener){
+
+        //keep for now, eventually change to just add pointers to the function itself.
+        this->eventMap[listener.eventType].push_back(std::make_unique<JUI::EventListener>(listener));
     }
 }

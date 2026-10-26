@@ -15,6 +15,7 @@ namespace Game{
     class SceneManager
     {
     private:
+
         sf::RenderWindow& window;
         std::unique_ptr<AssetManager>& assets;
 

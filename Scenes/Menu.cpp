@@ -35,7 +35,7 @@ namespace Scenes{
         });
         
         this->addToScene(otherButton);
-        this->events.push_back(std::make_unique<JUI::EventListener>(ev1));
+        this->addToScene(ev1);
 
         JUI::Button exitButton = JUI::Button({window.getSize().x/2, 900}, {400, 100}, sf::Color::White, assets->getFont("comic"), "Quit", sf::Color::Black, 50);
         JUI::EventListener ev2 = AddEvent(exitButton, sf::Event::MouseButtonReleased()){
@@ -48,7 +48,7 @@ namespace Scenes{
         });
 
         this->addToScene(exitButton);
-        this->events.push_back(std::make_unique<JUI::EventListener>(ev2));
+        this->addToScene(ev2);
 
     }
 

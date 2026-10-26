@@ -26,6 +26,8 @@ namespace Scenes{
 
             void reloadScene();
 
+            std::unordered_map<Game::EventType, std::list<std::unique_ptr<JUI::EventListener>>> eventMap;
+
 
         protected:
 
@@ -39,15 +41,12 @@ namespace Scenes{
             sf::RenderWindow& window;
 
             std::list<std::unique_ptr<JUI::UIElement>> sceneUI;
-
-            std::list<std::unique_ptr<JUI::EventListener>> events;
             
             Scene(sf::RenderWindow&, std::unique_ptr<Game::AssetManager>&);
             sf::Color backGroundColor; //probably delete maybe or like turn to UI element
 
             void addToScene(JUI::UIElement);
-            void addToScene(JUI::Button);    //not sure if I'll need this. I'm not really sure what I'm gonna do with event listeners
-            void addToScene(JUI::EventListener);          //not sure if I'll need this. I'm not really sure what I'm gonna do with event listeners
+            void addToScene(JUI::EventListener);
             virtual void onLoad();         
             virtual void onExpire();       
             virtual void onUpdate(sf::Time deltaTime);    

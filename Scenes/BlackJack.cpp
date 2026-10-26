@@ -23,19 +23,10 @@ namespace Scenes{
 
         this->isGameFinished = false;
 
-        this->dealerTotal = 0;
-        this->playerTotal = 0;
         this->isPlayerTurn = false;
 
-        for(auto& card : playerCards){
-            this->discard.push_back(std::move(card));
-        }
-        playerCards.clear();
-
-        for(auto& card : dealerCards){
-            this->discard.push_back(std::move(card));
-        }
-        dealerCards.clear();
+        player.newGame();
+        dealer.newGame();
 
         this->addToScene(FPSCounter);
         this->addToScene(moneyCounter);
@@ -59,7 +50,7 @@ namespace Scenes{
             sf::Vector2i clickPos = sf::Mouse::getPosition();
 
             if(hitButton.rect.bounds.contains(window.mapPixelToCoords(clickPos)) && this->isPlayerTurn){
-                draw();
+                player.Draw();
             }
         });
 
@@ -78,6 +69,13 @@ namespace Scenes{
         this->events.push_back(std::make_unique<JUI::EventListener>(standEvent));
 
         
+        player.Draw();
+        player.Draw();
+
+        dealer.Draw();
+
+        this->isPlayerTurn = true;
+
     }
 
     void BlackJack::onExpire(){
@@ -85,75 +83,29 @@ namespace Scenes{
     }
 
     void BlackJack::onUpdate(sf::Time deltaTime){
-        
+
         FPSCounter.setText("FPS: " + std::to_string((int)(1/deltaTime.asSeconds())));
 
-        if(isPlayerTurn){
-            if(playerCards.size() == 0){
-                draw();
-                draw();
-            }
-            return;
-        };
-        
-        if(dealerCards.size() == 0)
-        {
-            draw();
-            isPlayerTurn = true;
-            return;
-        }  
-        else while(dealerTotal < 17 && this->isGameFinished == false)
-        {
-            draw();
-        } 
-        isPlayerTurn = true;
-        this->end();
-    }
+        if(isGameFinished == true) end();
 
-    void BlackJack::draw(){
-        if(this -> isGameFinished) return;
-
-        currentDeck[0].IsHidden = false;
-
-        if(this->isPlayerTurn){
-            this->playerTotal += (int)currentDeck[0].rank;
-
-            if((int)currentDeck[0].rank == 1 && playerTotal <= 10) this->playerTotal += 10;
-
-            currentDeck[0].show({window.getSize().x/2 + playerCards.size() * 200 ,window.getSize().y*6/10}, assets->getFont("comic"));
-            this->sceneUI.push_back(std::move(currentDeck[0].body));
-            this->sceneUI.push_back(std::move(currentDeck[0].text));
-
-            this->playerCards.push_back(std::move(currentDeck[0]));
-
-            if(playerTotal > 21) end();
-        } else {
-            this->dealerTotal += (int)currentDeck[0].rank;
-
-            if((int)currentDeck[0].rank == 1 && dealerTotal <= 10) this->dealerTotal += 10;
-
-            currentDeck[0].show({window.getSize().x/8 + dealerCards.size()* 200 ,window.getSize().y/10}, assets->getFont("comic"));
-            this->sceneUI.push_back(std::move(currentDeck[0].body));
-            this->sceneUI.push_back(std::move(currentDeck[0].text));
-
-            this->dealerCards.push_back(std::move(currentDeck[0]));
-            if(dealerTotal > 21) end();
-            
+        else if(isPlayerTurn == false){
+            dealer.Draw();
         }
-        currentDeck.erase(currentDeck.begin());
-        
+
     }
 
     void BlackJack::end(){
 
-        this->isGameFinished = true;
-
         JUI::TextElement resultText = JUI::TextElement({window.getSize().x/2, window.getSize().y/4}, assets->getFont("comic"), "", sf::Color::Black, 50);
-        if(dealerTotal > 21 || (playerTotal > dealerTotal && playerTotal <= 21)){
+        if(dealer.cardTotal > 21 || (player.cardTotal > dealer.cardTotal && player.cardTotal <= 21)){
             
             resultText.setText("You Win!");
             this->money += this->bet;
-        }  else {
+        }  
+        else if(dealer.cardTotal == player.cardTotal){
+            resultText.setText("Tie");
+        }
+        else {
             resultText.setText("You Lose!");
             this->money -= this->bet;
         }
@@ -172,6 +124,59 @@ namespace Scenes{
         this->events.push_back(std::make_unique<JUI::EventListener>(replayEvent));
     }   
 
+    Player::Player(BlackJack& BJScene, bool isD, bool isP) : game(BJScene), isDealer(isP), isHuman(isP) {
+        
+        if(isDealer){
+            this->funds = 1'000'000'000;
+            this->bet = 100;
+        }
+
+        if(isHuman){ 
+            this->funds = 500;
+            this->bet = 100;
+        }
+    }
+
+    void Player::Draw(){
+        deck& Deck  = this->game.currentDeck;
+        Deck[0].IsHidden = false;
+        this->cardTotal += (int)Deck[0].rank;
+        float yPos;
+        float xPos;
+
+        if(this->isDealer){
+            yPos = 0.1f;
+            xPos = 0.125f;
+        }
+        else{
+            yPos = 0.6f;
+            xPos = 0.5f;
+        }
+
+        if((int)Deck[0].rank == 1 && this->cardTotal <= 10) this->cardTotal += 10;
+
+        Deck[0].show({game.window.getSize().x*xPos + this->hand.size() * 200 , game.window.getSize().y*yPos}, game.assets->getFont("comic"));
+        game.sceneUI.push_back(std::move(Deck[0].body));
+        game.sceneUI.push_back(std::move(Deck[0].text));
+
+        this->hand.push_back(std::move(Deck[0]));
+
+        Deck.erase(Deck.begin());
+
+        if(this->cardTotal >= 21 || (isDealer == true && cardTotal >= 17)){
+            this->game.isGameFinished = true;
+        }
+        
+    }
+
+    void Player::newGame(){
+        this->cardTotal = 0;
+
+        for(auto& card : this->hand){
+            this->game.discard.push_back(std::move(card));
+        }
+        hand.clear();
+    }
 
     Card::Card(Rank r, SuitType sT) : rank(r), suit(sT){
     }

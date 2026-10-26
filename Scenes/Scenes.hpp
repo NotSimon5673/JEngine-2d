@@ -28,13 +28,16 @@ namespace Scenes{
 
 
         protected:
-            sf::RenderWindow& window;
-            std::unique_ptr<Game::AssetManager>& assets;
 
             bool needsReload = false;
             void SuggestForQueue(std::unique_ptr<Scene>);
             
         public:
+
+            std::unique_ptr<Game::AssetManager>& assets;
+
+            sf::RenderWindow& window;
+
             std::list<std::unique_ptr<JUI::UIElement>> sceneUI;
 
             std::list<std::unique_ptr<JUI::EventListener>> events;

@@ -4,35 +4,30 @@
 
 namespace JUI{
 
-    Button::Button(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor, sf::Font& font, std::string message, std::function<void()> func, sf::Color textColor, uint textSize) : text(font, message, textSize), buttonFunction(func){
-
-        rectObject.setOrigin({size.x/2,size.y/2});
-        rectObject.setPosition(position);
-        rectObject.setSize(size);
-        rectObject.setFillColor(fillColor);
-
-        sf::FloatRect bounds = text.getLocalBounds();
-
-        text.setOrigin({bounds.size.x/2, bounds.size.y/2});
-        text.setPosition(position);
-        text.setFillColor(textColor);
+    Button::Button(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor, sf::Font& font, std::string message,  sf::Color textColor, uint textSize) : text(position, font, message, textColor, textSize), rect(position, size, fillColor){
+        
+        this->transform.origin = {size.x/2, size.y/2};
+        this->transform.position = position;
+        this->transform.scale = {1, 1};
+        this->transform.rotation = sf::Angle::Zero;
     }
 
-    void Button::draw(sf::RenderWindow& window){ 
-        window.draw(this->rectObject);
-        window.draw(this->text);
+    void Button::updateTransform(){
+        rect.transform.position = this->transform.position;
+        text.transform.position = this->transform.position;
+
+        rect.transform.scale = this->transform.scale;
+        text.transform.scale = this->transform.scale;
+
+        rect.transform.rotation = this->transform.rotation;
+        text.transform.rotation = this->transform.rotation;
     }
 
-    void Button::onRelease(sf::Vector2i ClickPosition){
-        sf::Vector2f Position = rectObject.getPosition();
-        sf::Vector2f Size = rectObject.getSize();
+    void Button::draw(sf::RenderWindow& window){
 
-
-        if(ClickPosition.x > Position.x - Size.x/2 && ClickPosition.y > Position.y - Size.y/2 && ClickPosition.x < Position.x + Size.x/2 && ClickPosition.y < Position.y + Size.y/2){
-            buttonFunction();
-        }
-            
-            
+        this->updateTransform();
+        
+        rect.draw(window);
+        text.draw(window);
     }
-
 }

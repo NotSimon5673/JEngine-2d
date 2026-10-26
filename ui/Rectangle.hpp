@@ -6,13 +6,11 @@
 
 namespace JUI{
 
-    class Rectangle: public UIElement
-    {
-        private:
-            
+    class Rectangle: virtual public UIElement
+    {            
         public:
 
-            sf::RectangleShape rectObject;
+            sf::FloatRect bounds;
 
             Rectangle(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor);
 
@@ -24,6 +22,6 @@ namespace JUI{
 
             void setColor(sf::Color);
 
-            void draw(sf::RenderWindow& window) override;
+            ~Rectangle() = default;
     };
 }

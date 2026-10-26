@@ -6,8 +6,9 @@
 
 #include "../Game/AssetManager.hpp"
 #include "../ui/UIElement.hpp"
+#include "../ui/Button.hpp"
 #include "../ui/Interactable.hpp"
-
+#include "../ui/EventListener.hpp"
 
 namespace Game {class SceneManager;}
 
@@ -27,24 +28,28 @@ namespace Scenes{
 
 
         protected:
-            sf::RenderWindow& window;
-            std::unique_ptr<Game::AssetManager>& assets;
 
             bool needsReload = false;
             void SuggestForQueue(std::unique_ptr<Scene>);
             
         public:
+
+            std::unique_ptr<Game::AssetManager>& assets;
+
+            sf::RenderWindow& window;
+
             std::list<std::unique_ptr<JUI::UIElement>> sceneUI;
-            std::list<std::unique_ptr<JUI::Interactable>> sceneInteractables;
-            
-            
-            
+
+            std::list<std::unique_ptr<JUI::EventListener>> events;
             
             Scene(sf::RenderWindow&, std::unique_ptr<Game::AssetManager>&);
             sf::Color backGroundColor; //probably delete maybe or like turn to UI element
 
+            void addToScene(JUI::UIElement);
+            void addToScene(JUI::Button);    //not sure if I'll need this. I'm not really sure what I'm gonna do with event listeners
+            void addToScene(JUI::EventListener);          //not sure if I'll need this. I'm not really sure what I'm gonna do with event listeners
             virtual void onLoad();         
             virtual void onExpire();       
-            virtual void onUpdate();    
+            virtual void onUpdate(sf::Time deltaTime);    
     };
 }

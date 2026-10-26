@@ -2,6 +2,7 @@
 #include "../ui/UIElement.hpp"
 #include "../ui/Rectangle.hpp"
 #include "../ui/Text.hpp"
+#include "../ui/EventListener.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <iostream>
@@ -20,116 +21,165 @@ namespace Scenes{
 
     void BlackJack::onLoad(){
 
-        this->isGameFinished = true;
+        this->isGameFinished = false;
 
-        this->dealerTotal = 0;
-        this->playerTotal = 0;
         this->isPlayerTurn = false;
 
-        for(auto& card : playerCards){
-            this->discard.push_back(std::move(card));
-        }
-        playerCards.clear();
+        player.newGame();
+        dealer.newGame();
 
-        for(auto& card : dealerCards){
-            this->discard.push_back(std::move(card));
-        }
-        dealerCards.clear();
+        this->addToScene(FPSCounter);
+        this->addToScene(moneyCounter);
+        this->addToScene(betCounter);
        
-        JUI::Button exitButton = JUI::Button({100, 100}, {100, 100}, sf::Color::White, assets->getFont("comic"), "Menu", [this]() {SuggestForQueue(std::make_unique<Scenes::Menu>(window,assets));}, sf::Color::Black, 30);
-        this->sceneInteractables.push_back(std::make_unique<JUI::Button>(exitButton));
+        JUI::Button exitButton = JUI::Button({100, 100}, {100, 100}, sf::Color::White, assets->getFont("comic"), "Menu", sf::Color::Black, 30);
+        JUI::EventListener ev3 = AddEvent(exitButton, sf::Event::MouseButtonReleased()){
+            sf::Vector2i clickPos = sf::Mouse::getPosition();
+
+            if(exitButton.rect.bounds.contains(window.mapPixelToCoords(clickPos))){
+                SuggestForQueue(std::make_unique<Scenes::Menu>(window,assets));
+            } 
+        });
+                
+        this->addToScene(exitButton);
+        this->events.push_back(std::make_unique<JUI::EventListener>(ev3));
 
 
-        JUI::Button hitButton = JUI::Button({window.getSize().x/4, 900}, {400, 100}, sf::Color::White, assets->getFont("kill"), "hit", [this]() {if(this->isPlayerTurn) draw();}, sf::Color::Black, 50);
-        this->sceneInteractables.push_back(std::make_unique<JUI::Button>(hitButton));
+        JUI::Button hitButton = JUI::Button({window.getSize().x/4, 900}, {400, 100}, sf::Color::White, assets->getFont("kill"), "hit", sf::Color::Black, 50);
+        JUI::EventListener hitEvent = AddEvent(hitButton, sf::Event::MouseButtonReleased()){
+            sf::Vector2i clickPos = sf::Mouse::getPosition();
 
-        JUI::Button standButton = JUI::Button({window.getSize().x*3/4, 900}, {400, 100}, sf::Color::White, assets->getFont("kill"), "stand", [this]() {this->isPlayerTurn = false;}, sf::Color::Black, 50);
-        this->sceneInteractables.push_back(std::make_unique<JUI::Button>(standButton));
+            if(hitButton.rect.bounds.contains(window.mapPixelToCoords(clickPos)) && this->isPlayerTurn){
+                player.Draw();
+            }
+        });
+
+        this->addToScene(hitButton);
+        this->events.push_back(std::make_unique<JUI::EventListener>(hitEvent));
+
+        JUI::Button standButton = JUI::Button({window.getSize().x*3/4, 900}, {400, 100}, sf::Color::White, assets->getFont("kill"), "stand", sf::Color::Black, 50);
+        JUI::EventListener standEvent = AddEvent(standButton, sf::Event::MouseButtonReleased()){
+            sf::Vector2i clickPos = sf::Mouse::getPosition();
+
+            if(standButton.rect.bounds.contains(window.mapPixelToCoords(clickPos))){
+                this->isPlayerTurn = false;
+            }
+        });
+        this->addToScene(standButton);
+        this->events.push_back(std::make_unique<JUI::EventListener>(standEvent));
 
         
+        player.Draw();
+        player.Draw();
+
+        dealer.Draw();
+
+        this->isPlayerTurn = true;
+
     }
 
     void BlackJack::onExpire(){
 
     }
 
-    void BlackJack::onUpdate(){
+    void BlackJack::onUpdate(sf::Time deltaTime){
 
-        if(isPlayerTurn){
-            if(playerCards.size() == 0){
-                draw();
-                draw();
-            }
-            return;
-        };
-        
-        if(dealerCards.size() == 0)
-        {
-            draw();
-            isPlayerTurn = true;
-            return;
-        }  
-        else while(dealerTotal < 17)
-        {
-            draw();
-        } 
-        isPlayerTurn = true;
-        this->end();
-    }
+        FPSCounter.setText("FPS: " + std::to_string((int)(1/deltaTime.asSeconds())));
 
+        if(isGameFinished == true) end();
 
-
-    void BlackJack::draw(){
-        if(this -> isGameFinished) return;
-
-        int temp = (int)currentDeck[0].rank;
-
-        if(temp > 10) temp = 10;
-
-        currentDeck[0].IsHidden = false;
-
-        if(this->isPlayerTurn){
-            this->playerTotal += temp;
-
-            currentDeck[0].show({window.getSize().x/2 + playerCards.size() * 200 ,window.getSize().y*6/10}, assets->getFont("comic"));
-            this->sceneInteractables.push_back(move(currentDeck[0].body));
-
-            this->playerCards.push_back(std::move(currentDeck[0]));
-
-            if(playerTotal > 21) end();
-        } else {
-            this->dealerTotal += temp;
-
-            currentDeck[0].show({window.getSize().x/8 + dealerCards.size()* 200 ,window.getSize().y/10}, assets->getFont("comic"));
-            this->sceneInteractables.push_back(move(currentDeck[0].body));
-
-            this->dealerCards.push_back(std::move(currentDeck[0]));
-            if(playerTotal > 21) end();
-            
+        else if(isPlayerTurn == false){
+            dealer.Draw();
         }
-        currentDeck.erase(currentDeck.begin());
-        
+
     }
 
     void BlackJack::end(){
 
-        this->isGameFinished = true;
+        JUI::TextElement resultText = JUI::TextElement({window.getSize().x/2, window.getSize().y/4}, assets->getFont("comic"), "", sf::Color::Black, 50);
+        if(dealer.cardTotal > 21 || (player.cardTotal > dealer.cardTotal && player.cardTotal <= 21)){
+            
+            resultText.setText("You Win!");
+            this->money += this->bet;
+        }  
+        else if(dealer.cardTotal == player.cardTotal){
+            resultText.setText("Tie");
+        }
+        else {
+            resultText.setText("You Lose!");
+            this->money -= this->bet;
+        }
+        this->addToScene(resultText);
 
-        if(dealerTotal > 21 || (playerTotal > dealerTotal && playerTotal <= 21)){
-            std::cout << "you win!";
-            this->money -= 100;
-        }  else {
-            std::cout << "you lose!";
-            this->money += 100;
+        moneyCounter.setText("Money: " + std::to_string(this->money));
+
+        JUI::Button replayButton = JUI::Button({window.getSize().x/2, window.getSize().y/2 - 20}, {400, 100}, sf::Color::White, assets->getFont("kill"), "play again", sf::Color::Black, 50);
+        JUI::EventListener replayEvent = AddEvent(replayButton, sf::Event::MouseButtonReleased()){
+            if(replayButton.rect.bounds.contains(window.mapPixelToCoords(sf::Mouse::getPosition()))){
+                this->needsReload = true;
+            }
+        });
+
+        this->addToScene(replayButton);
+        this->events.push_back(std::make_unique<JUI::EventListener>(replayEvent));
+    }   
+
+    Player::Player(BlackJack& BJScene, bool isD, bool isP) : game(BJScene), isDealer(isP), isHuman(isP) {
+        
+        if(isDealer){
+            this->funds = 1'000'000'000;
+            this->bet = 100;
         }
 
-        
-        JUI::Button standButton = JUI::Button({window.getSize().x/2, window.getSize().y/2}, {400, 100}, sf::Color::White, assets->getFont("kill"), "play again", [this]() {this->needsReload = true;}, sf::Color::Black, 50);
-        this->sceneInteractables.push_back(std::make_unique<JUI::Button>(standButton));        
+        if(isHuman){ 
+            this->funds = 500;
+            this->bet = 100;
+        }
     }
 
+    void Player::Draw(){
+        deck& Deck  = this->game.currentDeck;
+        Deck[0].IsHidden = false;
+        this->cardTotal += (int)Deck[0].rank;
+        float yPos;
+        float xPos;
 
-    Card::Card(Rank r, SuitType sT) : rank(r), suit(sT){}
+        if(this->isDealer){
+            yPos = 0.1f;
+            xPos = 0.125f;
+        }
+        else{
+            yPos = 0.6f;
+            xPos = 0.5f;
+        }
+
+        if((int)Deck[0].rank == 1 && this->cardTotal <= 10) this->cardTotal += 10;
+
+        Deck[0].show({game.window.getSize().x*xPos + this->hand.size() * 200 , game.window.getSize().y*yPos}, game.assets->getFont("comic"));
+        game.sceneUI.push_back(std::move(Deck[0].body));
+        game.sceneUI.push_back(std::move(Deck[0].text));
+
+        this->hand.push_back(std::move(Deck[0]));
+
+        Deck.erase(Deck.begin());
+
+        if(this->cardTotal >= 21 || (isDealer == true && cardTotal >= 17)){
+            this->game.isGameFinished = true;
+        }
+        
+    }
+
+    void Player::newGame(){
+        this->cardTotal = 0;
+
+        for(auto& card : this->hand){
+            this->game.discard.push_back(std::move(card));
+        }
+        hand.clear();
+    }
+
+    Card::Card(Rank r, SuitType sT) : rank(r), suit(sT){
+    }
 
     void Card::show(sf::Vector2f position,  sf::Font& f){
 
@@ -169,9 +219,10 @@ namespace Scenes{
         }
 
         if(this->IsHidden == false){
-            this->body = std::make_unique<JUI::Button>(JUI::Button(position, {150,210}, sf::Color::White, f, rankStr + " of " + suitStr +"s",[](){return;}, sf::Color::Black,20));
+            this->body = std::make_unique<JUI::Rectangle>(JUI::Rectangle(position, {150,210}, sf::Color::White));
+            this->text = std::make_unique<JUI::TextElement>(JUI::TextElement(position, f, rankStr + " of " + suitStr +"s", sf::Color::Black, 20));
         } else {
-            this->body = std::make_unique<JUI::Button>(JUI::Button(position, {150,210}, sf::Color::Red, f, "",[](){return;}));
+            this->body = std::make_unique<JUI::Rectangle>(JUI::Rectangle(position, {150,210}, sf::Color::Red));
         }
     }
 

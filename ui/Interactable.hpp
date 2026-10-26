@@ -5,15 +5,14 @@
 #include "UIElement.hpp"
 
 namespace JUI{
-
-    class Interactable: public UIElement
+    
+    class Interactable: virtual public UIElement
     {
         private:
             bool isHeld = false;
             
         public:
-            virtual void onPress(sf::Vector2i ClickPosition) = 0;
 
-            virtual void onRelease(sf::Vector2i ClickPosition) = 0;
+            ~Interactable() = default;
     };
 }

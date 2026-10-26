@@ -3,19 +3,23 @@
 #include <SFML/Window.hpp>
 #include <iostream>
 #include "Interactable.hpp"
+#include "Rectangle.hpp"
+#include "Text.hpp"
 
 namespace JUI{
 
-    class Button: public Interactable
-    {
+    class Button: public UIElement{
+
         private:
-            std::function<void()> buttonFunction;
+            
+
         public:
 
-            sf::RectangleShape rectObject;
-            sf::Text text;
+        //put back in private once my awful code is fixed
+            Rectangle rect;
+            TextElement text;
 
-            Button(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor, sf::Font& TextFont, std::string message, std::function<void()>, sf::Color textColor = sf::Color::Black, uint textSize = 30);
+            Button(sf::Vector2f position, sf::Vector2f size, sf::Color fillColor, sf::Font& TextFont, std::string message,  sf::Color textColor = sf::Color::Black, uint textSize = 30);
 
             void move(sf::Vector2f position);
 
@@ -25,10 +29,10 @@ namespace JUI{
 
             void setColor(sf::Color);
 
-            void onPress(sf::Vector2i ClickPosition) override {};
-
-            void onRelease(sf::Vector2i ClickPosition) override;
-
             void draw(sf::RenderWindow& window) override;
+
+            void updateTransform() override;
+
+            ~Button() override = default;
     };
 }

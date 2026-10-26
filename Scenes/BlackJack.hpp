@@ -9,11 +9,13 @@
 
 namespace Scenes{
 
-    enum Rank: std::int8_t {Ace = 1, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King};
+    class BlackJack;
+
+    enum Rank: std::int8_t {Ace = 1, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack = 10, Queen = 10, King = 10};
 
     enum SuitType :  std::int8_t {Heart,  Diamond, Spade, Club};
 
-    struct Card
+    class Card
     {
     public:
         Card(Rank, SuitType);
@@ -24,9 +26,11 @@ namespace Scenes{
 
         SuitType suit;
 
-        std::unique_ptr<JUI::Button> body;
-
         bool IsHidden = true;
+
+        std::unique_ptr<JUI::Rectangle> body;
+
+        std::unique_ptr<JUI::TextElement> text;
     };
 
     struct deck : public std::vector<Card> {
@@ -36,34 +40,72 @@ namespace Scenes{
         void shuffle();
     };
 
+    class Player{
+        private:
+            bool isDealer;
+            bool isHuman;
+
+            BlackJack& game;
+
+            std::uint_least64_t funds = 500;
+            std::uint_least64_t bet = 100;
+
+            std::vector<Card> hand;
+
+            
+
+        public:
+
+        std::uint_fast8_t cardTotal;
+        
+        Player(BlackJack& gameScene, bool IsDealer, bool IsPlayer);
+        
+        
+        void newGame();
+
+        void Draw();
+    };
+
     class BlackJack : public Scene
     {
-        private:
-            std::uint_least64_t money = 500;
-            int bet = 100;
-            std::uint_fast8_t dealerTotal;
-            std::vector<Card> dealerCards;
+        public:
 
-            std::uint_fast8_t playerTotal;
-            std::vector<Card> playerCards;
+        Player *winner;
 
-            bool isGameFinished = false;
+        Player dealer = Player(*this, false, true);
+        Player player = Player(*this, true, false);
 
-            bool isPlayerTurn = false;
+        JUI::TextElement FPSCounter = JUI::TextElement({900, 50}, assets->getFont("comic"), "FPS: 0", sf::Color::Black, 30);  
 
-            deck currentDeck = deck();
+        JUI::TextElement moneyCounter = JUI::TextElement({window.getSize().x - 200, 50}, assets->getFont("comic"), "Money: 500", sf::Color::Black, 30);
 
-            deck discard;
+        JUI::TextElement betCounter = JUI::TextElement({window.getSize().x - 200, 100}, assets->getFont("comic"), "Bet: 100", sf::Color::Black, 30);
 
-            void draw();
+        std::uint_least64_t money = 500;
+        std::uint_least64_t bet = 100;
 
-            void end();
+        std::uint_fast8_t dealerTotal;
+        std::vector<Card> dealerCards;
 
-        public:     
+        std::uint_fast8_t playerTotal;
+        std::vector<Card> playerCards;
+
+        bool isGameFinished = false;
+
+        bool isPlayerTurn = false;
+
+        deck discard;
+
+        void draw();
+
+        void end();
+
         BlackJack(sf::RenderWindow&, std::unique_ptr<Game::AssetManager>&);
+
+        deck currentDeck = deck();
 
         virtual void onLoad() override;         
         virtual void onExpire() override;       
-        virtual void onUpdate() override;    
+        virtual void onUpdate(sf::Time deltaTime) override;    
     };
 }

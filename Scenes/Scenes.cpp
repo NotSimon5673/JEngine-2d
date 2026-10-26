@@ -19,8 +19,7 @@ namespace Scenes{
         //also does nothing...
     }
     
-    void Scene::onUpdate(){
-        
+    void Scene::onUpdate(sf::Time deltaTime){
     }
 
     void Scene::SuggestForQueue(std::unique_ptr<Scene> suggestedForQueue)
@@ -34,9 +33,17 @@ namespace Scenes{
 
     void Scene::reloadScene(){
         this->needsReload = false;
-        this->sceneInteractables.clear();
         this->sceneUI.clear();
+        this->events.clear();
 
         this->onLoad();
+    }
+
+    void Scene::addToScene(JUI::UIElement element){
+        this->sceneUI.push_back(std::make_unique<JUI::UIElement>(element));
+    }
+
+    void Scene::addToScene(JUI::Button button){
+        this->sceneUI.push_back(std::make_unique<JUI::Button>(button));
     }
 }

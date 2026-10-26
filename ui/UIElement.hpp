@@ -2,12 +2,62 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <iostream>
+#include<list>
 
 namespace JUI{
 
-    class UIElement
-    {
-        public:
-            virtual void draw(sf::RenderWindow& window) = 0;
+    struct Transform{
+            sf::Vector2f position;
+            sf::Angle rotation;
+            sf::Vector2f scale;
+            sf::Vector2f origin;
     };
+
+    class EventListener;
+
+    //Template for UI elements
+    class UIElement{
+        private: 
+            friend class EventListener;
+            Transform reference = Transform();    //set at runtime
+        protected:
+            //do this until SFML releases a generic parent class for drawable and transformable objects. object and transformable point to the same object but are different types.
+            std::shared_ptr<sf::Drawable> objectDrawable;
+            std::shared_ptr<sf::Transformable> objectTransformable;
+
+            virtual void updateTransform(){
+                if(transform.position != reference.position){
+                    objectTransformable->setPosition(transform.position);
+                    reference.position = transform.position;
+                }
+                
+                if(transform.rotation != reference.rotation){
+                    objectTransformable->setRotation(transform.rotation);
+                    reference.rotation = transform.rotation;
+                }
+
+                if(transform.scale != reference.scale){
+                    objectTransformable->setScale(transform.scale);
+                    reference.scale = transform.scale;
+                }
+
+                if(transform.origin != reference.origin){
+                    objectTransformable->setOrigin(transform.origin);
+                    reference.origin = transform.origin;
+                }
+            }
+
+        public:
+
+            
+
+            Transform transform;
+            virtual void draw(sf::RenderWindow& window) {
+                updateTransform();
+
+                window.draw(*objectDrawable);
+            };
+            
+            virtual ~UIElement() = default;
+        };
 }

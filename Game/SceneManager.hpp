@@ -26,7 +26,7 @@ namespace Game{
         SceneManager(sf::RenderWindow&, std::unique_ptr<AssetManager>&);
         ~SceneManager();
 
-        void update();
+        void update(sf::Time deltaTime);
         
         void nextInQueue();
 
